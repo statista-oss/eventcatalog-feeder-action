@@ -37,7 +37,7 @@ runs:
       if: ${{ steps.find-specs.outputs.spec_files  != '' }}
       uses: actions/checkout@v4
       with:
-        repository: {{inputs.catalog-repo-url}}
+        repository: ${{ inputs.catalog-repo-url }}
         path: catalog/
 
     - name: 'Fetch cached spec files'
