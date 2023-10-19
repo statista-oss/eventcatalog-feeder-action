@@ -16,15 +16,15 @@ runs:
     - name: 'Find specs'
       id: find-specs
       uses: statista-oss/find-openAPI-Specifications@main
-      with:
-        repository: ''
-        search-dir: ''
-        head-only: ''
+      #with:
+      #  repository: ""
+      #  search-dir: ""
+      #  head-only: ""
 
     - name: 'Display specs'
       shell: bash
       run: |
-        echo 'Found specs ' ${{ steps.find-specs.outputs.spec_files  }}
+        echo ${{ steps.find-specs.outputs.spec_files  }}
 
     - name: 'Cache found specs'
       if: ${{ steps.find-specs.outputs.spec_files  != '' }}
