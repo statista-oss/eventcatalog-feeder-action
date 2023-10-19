@@ -19,7 +19,12 @@ runs:
       with:
         repository: ''
         search-dir: ''
-        head-only: true
+        head-only: ''
+
+    - name: 'Display specs'
+      shell: bash
+      run: |
+        echo 'Found specs ' ${{ steps.find-specs.outputs.spec_files  }}
 
     - name: 'Cache found specs'
       if: ${{ steps.find-specs.outputs.spec_files  != '' }}
