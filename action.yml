@@ -1,0 +1,82 @@
+name: 'Event/API-Catalog Feeder'
+description: 'Publish API specifications to an Event/API-Catalog repo by creating a PR.'
+inputs:
+  catalog-repo-url:
+    description: 'Repo URL where the Event/API-Catalog is stored'
+    required: true
+  domain:
+    description: 'The domain to which the spec(s) belong to'
+    required: true
+  domain-slug:
+    description: 'domain name without whitespaces or special characters'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Find specs'
+      id: find-specs
+      uses: statista-oss/find-openAPI-Specifications@main
+      with:
+        repository: ''
+        search-dir: ''
+        head-only: true
+
+    - name: 'Cache found specs'
+      if: ${{ steps.find-specs.outputs.spec_files  != '' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: specs
+        path: |
+          ${{ steps.find-specs.outputs.spec_files }}
+
+    - name: 'Tidy up the workspace 🧹'
+      if: ${{ steps.find-specs.outputs.spec_files  != '' }}
+      uses: AutoModality/action-clean@v1
+
+    - name: 'Checkout Event/API-Catalog repo'
+      if: ${{ steps.find-specs.outputs.spec_files  != '' }}
+      uses: actions/checkout@v4
+      with:
+        repository: {{inputs.catalog-repo-url}}
+        path: catalog/
+
+    - name: 'Fetch cached spec files'
+      if: ${{ steps.find-specs.outputs.spec_files  != '' }}
+      uses: actions/download-artifact@v3
+      with:
+        name: specs
+        path: specs/
+
+    - name: 'Copy new/updated spec files to Event/API-Catalog repo'
+      if: ${{ steps.find-specs.outputs.spec_files  != '' }}
+      shell: bash
+      run: |
+        echo 'not there yet'
+
+    - name: 'Create Pull Request with new/updated spec files'
+      if: ${{ steps.find-specs.outputs.spec_files  != '' }}
+      id: create-pr
+      uses: peter-evans/create-pull-request@v5.0.2
+      with:
+        path: catalog/
+        commit-message: New/Updated spec files for ${{ inputs.domain }} domain
+        committer: GitHub <noreply@github.com>
+        author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        branch: spec-feeder-${{ inputs.domain-slug }}-new
+        delete-branch: true
+        title: 'New/Updated spec files for ${{ inputs.domain }} domain'
+        labels: |
+          automation
+        # define and set
+        #team-reviewers: |
+        #    developers
+        #    qa-team
+
+
+
+    - name: Check outputs
+      if: ${{ steps.find-specs.outputs.spec_files  != '' }}
+      shell: bash
+      run: |
+        echo "Pull Request Number - ${{ steps.create-pr.outputs.pull-request-number }}"
+        echo "Pull Request URL - ${{ steps.create-pr.outputs.pull-request-url }}"
