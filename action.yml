@@ -1,7 +1,7 @@
 name: 'Event/API-Catalog Feeder'
 description: 'Publish API specifications to an Event/API-Catalog repo by creating a PR.'
 inputs:
-  catalog-repo-url:
+  catalog-repo:
     description: 'Repo URL where the Event/API-Catalog is stored'
     required: true
   domain:
@@ -16,10 +16,10 @@ runs:
     - name: 'Find specs'
       id: find-specs
       uses: statista-oss/find-openAPI-Specifications@main
-      #with:
-      #  repository: ""
-      #  search-dir: ""
-      #  head-only: ""
+      with:
+        repository: ""
+        search-dir: ""
+        head-only: true
 
     - name: 'Display specs'
       shell: bash
@@ -42,7 +42,7 @@ runs:
       if: ${{ steps.find-specs.outputs.spec_files  != '' }}
       uses: actions/checkout@v4
       with:
-        repository: ${{ inputs.catalog-repo-url }}
+        repository: ${{ inputs.catalog-repo }}
         path: catalog/
 
     - name: 'Fetch cached spec files'
@@ -55,8 +55,15 @@ runs:
     - name: 'Copy new/updated spec files to Event/API-Catalog repo'
       if: ${{ steps.find-specs.outputs.spec_files  != '' }}
       shell: bash
+      # todo ⤵️
+      # we need to create the domain folder
+      # then we need to create the service folder, based on the spec's name (we assume this as the
+      # the service name)
+      # Also versioning needs to somewhat happen
+      # Maybe using a custom js action is suitable?
       run: |
         echo 'not there yet'
+      
 
     - name: 'Create Pull Request with new/updated spec files'
       if: ${{ steps.find-specs.outputs.spec_files  != '' }}

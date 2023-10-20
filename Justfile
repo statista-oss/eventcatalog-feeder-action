@@ -1,0 +1,2 @@
+it:
+    act -s GITHUB_TOKEN=$GITHUB_TOKEN

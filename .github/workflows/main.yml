@@ -6,9 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: https://github.com/statista-oss/find-openAPI-Specifications
+          repository: statista-oss/find-openAPI-Specifications
       - uses: statista-oss/eventcatalog-feeder-action@main
         with:
           domain: foobar
           domain-slug: foobar
-          catalog-repo-url: https://github.com/PIT-Shared/api-catalog
+          catalog-repo: PIT-Shared/api-catalog
